@@ -1,0 +1,51 @@
+body{ /*center the body and configure it to be easily customizable*/
+    font-family: Arial;
+    background-color: #18191A;
+    margin: 0px;
+    padding: 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/*Do we even need to use canvas?*/
+canvas { 
+    visibility: hidden; /*set to visible once the button has been pressed*/
+    padding: 0;
+    margin: auto;
+    display: block;
+    width: 700px;
+    height: 700px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.button-class{ /*editing the button "div"*/
+    /*set to invisible when the button has been pressed*/
+    visibility: visible; 
+    margin: 0;
+    position: absolute; 
+    /*put it in the center of the screen*/
+    top: 50%; 
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+.button-class button { /*styling the button itself, inside button-class*/
+    padding: 8px;
+    margin: 2px;
+    background-color: black;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    border: none;
+    transform: scale(5.0);
+}
+button:hover{
+    transform: scale(5.2);
+    background-color: #4C9A2A;
+}
