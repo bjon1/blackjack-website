@@ -27,7 +27,7 @@ function main() {
 
     playButton.addEventListener('click', () => makeGameVisible()); 
     hitButton.addEventListener('click', makeMove("hit", player));
-    stayButton.addEventListener('click', makeMove("stay", player));
+    stayButton.addEventListener('click', dealerMakeMove());
 
     //create a deck
     const suits = ['Spades', 'Diamonds', 'Hearts', 'Clubs'];
@@ -40,16 +40,6 @@ function main() {
     }
 
     shuffleDeck();
-    gameLoop();
-}
-
-function gameLoop(){
-    //game loop logic (follow the flowchart)
-
-
-    setInterval(gameLoop, 1000/60); //gameLoop() executed 60 times per second
-    //clearInterval() stops the loop
-}
 
 function makeGameVisible(){
     playButton.style.visibility = "hidden";
@@ -69,34 +59,50 @@ function shuffleDeck(){
 /* 
     function that runs the process of making a move
 */
-function makeMove(action, participant){
-    if(action == "hit"){
-        drawCard(participant);
-        displayCard(newCard, participant);
-        checkAndInitiateWin();
-    } 
-
-    if(action == "stay"){
-        //hide the hit and stay buttons
-        
+function makeMove(participant){
+    let newCard = drawCard(participant);
+    displayCard(newCard, participant);
+    updateHandTotal(participant);
+    if(participant.total > 21){ //check if bust
+        if(participant == dealer){
+            displayWin(player);
+        } else {
+            displayWin(dealer);
+        }
     }
+}
+
+/*
+    function to execute dealer's choices
+*/
+
+function dealerMakeMove(){
+    //dealer reveals hidden card
+    //follow flowchart logic
+
+
 }
 
 /*
     function to draw card
 */
 function drawCard(participant){
+    let newCard;
     //if this is the dealer's second card, it must be face down
     if(participant == dealer && participant.hand.length == 1){ 
-        let newCard = deck.pop();
+        newCard = deck.pop();
         newCard.face = "hidden";
         dealer.hand.push(newCard);
+        return newCard;
     } else {
         if(participant == player){
-            player.hand.push(deck.pop());
+            newCard = deck.pop();
+            player.hand.push(newCard);
         } else {
-            dealer.hand.push(deck.pop());
+            newCard = deck.pop();
+            dealer.hand.push(newCard);
         }
+        return newCard;
     }
 }
 
@@ -105,10 +111,10 @@ function drawCard(participant){
 */
 function checkAndInitiateWin(){
     let game = true; //true if game is still running
-    if(dealer.hand > player.hand){
+    if(dealer.total > player.total){
         displayWin(dealer);
         game = false;
-    } else if(player.hand > dealer.hand) {
+    } else if(player.total > dealer.total) {
         displayWin(player);
         game = false;
     } else {
@@ -182,7 +188,7 @@ function updateHandTotal(participant){
         aceCount--;
     }
 
-    participant.hand = hand; //update the participant's hand
+    participant.total = total; //update the participant's hand
 }
 
 /*
