@@ -27,7 +27,7 @@ function main() {
 
     playButton.addEventListener('click', () => makeGameVisible()); 
     hitButton.addEventListener('click', makeMove("hit", player));
-    stayButton.addEventListener('click', dealerMakeMove());
+    stayButton.addEventListener('click', dealerTurn());
 
     //create a deck
     const suits = ['Spades', 'Diamonds', 'Hearts', 'Clubs'];
@@ -40,6 +40,13 @@ function main() {
     }
 
     shuffleDeck();
+
+    //if a card is drawn, it is displayed
+    drawCard(dealer);
+    drawCard(player);
+    drawCard(dealer);
+    drawCard(player);
+}
 
 function makeGameVisible(){
     playButton.style.visibility = "hidden";
@@ -60,14 +67,13 @@ function shuffleDeck(){
     function that runs the process of making a move
 */
 function makeMove(participant){
-    let newCard = drawCard(participant);
-    displayCard(newCard, participant);
+    drawCard(participant);
     updateHandTotal(participant);
     if(participant.total > 21){ //check if bust
         if(participant == dealer){
-            displayWin(player);
+            displayGameResult(player);
         } else {
-            displayWin(dealer);
+            displayGameResult(dealer);
         }
     }
 }
@@ -75,16 +81,17 @@ function makeMove(participant){
 /*
     function to execute dealer's choices
 */
-
-function dealerMakeMove(){
+function dealerTurn(){
     //dealer reveals hidden card
-    //follow flowchart logic
-
-
+    dealer.hand[1].face = "shown";
+    while(dealer.total <= 16){
+        makeMove(dealer);
+    }
+    compareTotals();
 }
 
 /*
-    function to draw card
+    function to draw card, calls displayCard()
 */
 function drawCard(participant){
     let newCard;
@@ -93,7 +100,7 @@ function drawCard(participant){
         newCard = deck.pop();
         newCard.face = "hidden";
         dealer.hand.push(newCard);
-        return newCard;
+        displayCard(newCard, participant);
     } else {
         if(participant == player){
             newCard = deck.pop();
@@ -102,23 +109,23 @@ function drawCard(participant){
             newCard = deck.pop();
             dealer.hand.push(newCard);
         }
-        return newCard;
+        displayCard(newCard, participant);
     }
 }
 
 /*
-    function to check win, tie
+    function to compare totals; calls displayGameResult() with the appropriate result
 */
-function checkAndInitiateWin(){
+function compareTotals(){
     let game = true; //true if game is still running
     if(dealer.total > player.total){
-        displayWin(dealer);
+        displayGameResult(dealer);
         game = false;
     } else if(player.total > dealer.total) {
-        displayWin(player);
+        displayGameResult(player);
         game = false;
     } else {
-        displayWin("tie");
+        displayGameResult("tie");
         game = false;
     }
     return game;
@@ -128,7 +135,7 @@ function checkAndInitiateWin(){
 /*
     function to display a drawn card
 */
-function displayCard(newCard, participant){
+function displayCard(card, participant){
     /*
         Use CSS flexbox to display a card. 
 
@@ -137,7 +144,7 @@ function displayCard(newCard, participant){
 
         if "shown" is false, show a face-down card
     */
-    if(newCard.face == "hidden") {
+    if(card.face == "hidden") {
         //show a face-down card
     } else {
         if(participant == dealer){
@@ -151,7 +158,7 @@ function displayCard(newCard, participant){
 /*
     function to display win, tie
 */
-function displayWin(winner){
+function displayGameResult(winner){
     if(winner == player){
         //display player winning screen
     } 
@@ -190,15 +197,3 @@ function updateHandTotal(participant){
 
     participant.total = total; //update the participant's hand
 }
-
-/*
-// Deal the initial cards
-dealCard(player);
-dealCard(dealer);
-dealCard(player);
-dealCard(dealer);
-*/
-
-
-
-
