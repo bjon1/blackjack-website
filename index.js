@@ -1,7 +1,9 @@
 window.addEventListener('load', main); //call the main method once the page has loaded
 
 //references to the play button and the game (originally created in CSS)
-const playButton = document.querySelector('.button-class'); 
+const playButton = document.querySelector('.play-button'); 
+const hitButton = document.getElementById('hit-button');
+const stayButton = document.getElementById('stay-button');
 const game = document.querySelector('.game-class');
 
 /*
@@ -26,21 +28,23 @@ let deck = [];
 function main() {
 
     playButton.addEventListener('click', () => makeGameVisible()); 
-    hitButton.addEventListener('click', makeMove("hit", player));
-    stayButton.addEventListener('click', dealerTurn());
+    hitButton.addEventListener('click', () => makeMove(player));
+    stayButton.addEventListener('click', () => dealerTurn());
+    
 
     //create a deck
     const suits = ['Spades', 'Diamonds', 'Hearts', 'Clubs'];
     const values = ['Ace', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King'];
     //for every suit and every value (suit * value combinations), enter card into deck
-    for(let suit in suits){
-        for(let value in values){
+    for(let suit of suits){
+        for(let value of values){
             deck.push({suit: suit, value: value, face: "shown"}); 
         }
     }
+  
 
     shuffleDeck();
-
+    console.log(deck);
     //if a card is drawn, it is displayed
     drawCard(dealer);
     drawCard(player);
@@ -111,6 +115,8 @@ function drawCard(participant){
         }
         displayCard(newCard, participant);
     }
+    hitButton.style.visibility = "visible";
+    stayButton.style.visibility = "visible";
 }
 
 /*
@@ -159,15 +165,19 @@ function displayCard(card, participant){
     function to display win, tie
 */
 function displayGameResult(winner){
+    //hide hit and stay buttons
     if(winner == player){
+        console.log("Player win");
         //display player winning screen
     } 
 
     if(winner == dealer) {
+        console.log("Dealer win");
         //display dealer winning screen
     }
 
     if(winner == "tie") {
+        console.log("Tie");
         //display tie
     }
 }
