@@ -50,11 +50,22 @@ function main() {
     drawCard(player);
     drawCard(dealer);
     drawCard(player);
+
+    console.log("PLAYER'S HAND");
+    console.log(player.hand);
+    console.log("DEALER'S HAND");
+    console.log(dealer.hand);
+
+    
+    
 }
 
 function makeGameVisible(){
-    playButton.style.visibility = "hidden";
+    playButton.remove();
     game.style.visibility = "visible";
+    hitButton.style.visibility = "visible";
+    stayButton.style.visibility = "visible";
+    
 }
 
 /*
@@ -71,14 +82,30 @@ function shuffleDeck(){
     function that runs the process of making a move
 */
 function makeMove(participant){
+    if(participant == player){
+        console.log("Player Hit");
+    } else {
+        console.log("Dealer Hit");
+    }
     drawCard(participant);
     updateHandTotal(participant);
+    return checkIfBust(participant);
+}
+
+/*
+    function that checks if a hand is greater than 21 
+*/
+function checkIfBust(participant){
     if(participant.total > 21){ //check if bust
         if(participant == dealer){
-            displayGameResult(player);
+            displayBust(dealer);
+            return true;
         } else {
-            displayGameResult(dealer);
+            displayBust(player);
+            return true;
         }
+    } else {
+        return false;
     }
 }
 
@@ -88,10 +115,15 @@ function makeMove(participant){
 function dealerTurn(){
     //dealer reveals hidden card
     dealer.hand[1].face = "shown";
-    while(dealer.total <= 16){
-        makeMove(dealer);
+    let bust;
+    //reveal card
+    while(dealer.total <= 16 ){
+        bust = makeMove(dealer);
     }
-    compareTotals();
+    
+    if(!bust){
+        compareTotals();
+    }
 }
 
 /*
@@ -115,28 +147,33 @@ function drawCard(participant){
         }
         displayCard(newCard, participant);
     }
-    hitButton.style.visibility = "visible";
-    stayButton.style.visibility = "visible";
 }
 
 /*
     function to compare totals; calls displayGameResult() with the appropriate result
 */
 function compareTotals(){
-    let game = true; //true if game is still running
     if(dealer.total > player.total){
         displayGameResult(dealer);
-        game = false;
     } else if(player.total > dealer.total) {
         displayGameResult(player);
-        game = false;
     } else {
         displayGameResult("tie");
-        game = false;
     }
-    return game;
 }
 
+/* 
+    function to display the bust screen
+*/
+function displayBust(participant){
+    hitButton.style.visibility = "hidden";
+    stayButton.style.visibility = "hidden";
+    if(participant == player){
+        console.log("Player Bust! Dealer Wins!");
+    } else if (participant == dealer){
+        console.log("Dealer Bust! Player wins!");
+    }
+}
 
 /*
     function to display a drawn card
@@ -151,11 +188,14 @@ function displayCard(card, participant){
         if "shown" is false, show a face-down card
     */
     if(card.face == "hidden") {
+        console.log(card);
         //show a face-down card
     } else {
         if(participant == dealer){
+            console.log(card);
             //show the respective card face-up 
         } else {
+            console.log(card);
             //show the respective card face-up 
         }
     }
@@ -169,17 +209,15 @@ function displayGameResult(winner){
     if(winner == player){
         console.log("Player win");
         //display player winning screen
-    } 
-
-    if(winner == dealer) {
+    } else if(winner == dealer) {
         console.log("Dealer win");
         //display dealer winning screen
-    }
-
-    if(winner == "tie") {
+    } else if(winner == "tie") {
         console.log("Tie");
         //display tie
     }
+    hitButton.style.visibility = "hidden";
+    stayButton.style.visibility = "hidden";
 }
 
 
