@@ -1,6 +1,7 @@
 window.addEventListener('load', main); //call the main method once the page has loaded
 
 //references to the play button and the game (originally created in CSS)
+const buttons = document.querySelector('.buttons');
 const playButton = document.querySelector('.play-button'); 
 const hitButton = document.getElementById('hit-button');
 const stayButton = document.getElementById('stay-button');
@@ -10,6 +11,9 @@ const dealerCards = document.getElementById("dealer-cards");
 const playerCards = document.getElementById("player-cards");
 const dealerTotal = document.getElementById("total-dealer");
 const playerTotal = document.getElementById("total-player");
+const resetButton = document.getElementById("reset-button");
+const playerScore = document.getElementById("player-score");
+const dealerScore = document.getElementById("dealer-score");
 
 game.style.color = "gray";
  
@@ -26,12 +30,14 @@ cardImgHidden.src = "./cards/facedown.png";
 let player = {
     hand: [],
     bet: undefined,
-    total: 0
+    total: 0,
+    score: 0
 };
 let dealer = {
     hand: [],
     bet: undefined,
-    total: 0
+    total: 0,
+    score: 0
 };
 let deck = [];
 
@@ -40,8 +46,31 @@ function main() {
     playButton.addEventListener('click', () => makeGameVisible()); 
     hitButton.addEventListener('click', () => makeMove(player));
     stayButton.addEventListener('click', () => dealerTurn());
+    resetButton.addEventListener('click', () => resetGame());
     
+    initializeDeck();
+  
 
+    shuffleDeck();
+    //if a card is drawn, it is displayed
+    drawCard(dealer);
+    drawCard(player);
+    drawCard(dealer);
+    drawCard(player);
+}
+
+function makeGameVisible(){
+    playButton.remove();
+    game.style.display = "inline";
+    hitButton.style.display = "inline";
+    stayButton.style.display = "inline";
+}
+
+/*
+    function to create a deck
+*/
+function initializeDeck(){
+    deck = [];
     //create a deck
     const suits = ['S', 'D', 'H', 'C'];
     const values = ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K'];
@@ -51,32 +80,32 @@ function main() {
             deck.push({suit: suit, value: value, face: "shown"}); 
         }
     }
-  
-
     shuffleDeck();
-    console.log(deck);
-    //if a card is drawn, it is displayed
+}
+
+/*
+    function to reset the game
+*/
+function resetGame(){
+    //document.location.reload(); won't save the score
+    [player.bet, player.total, dealer.bet, dealer.total] = [0, 0, 0, 0];
+    [player.hand, dealer.hand] = [[],[]];
+    hitButton.style.display = "inline";
+    stayButton.style.display = "inline";
+    initializeDeck();
+    result.innerHTML = '';
+    playerCards.innerHTML = '';
+    dealerCards.innerHTML = '';
+    playerTotal.innerHTML = '';
+    dealerTotal.innerHTML = '';
+    resetButton.style.display = "none";
+
     drawCard(dealer);
     drawCard(player);
     drawCard(dealer);
     drawCard(player);
-
-    console.log("PLAYER'S HAND");
-    console.log(player.hand);
-    console.log("DEALER'S HAND");
-    console.log(dealer.hand);
-
-    
-    
 }
 
-function makeGameVisible(){
-    playButton.remove();
-    game.style.visibility = "visible";
-    hitButton.style.visibility = "visible";
-    stayButton.style.visibility = "visible";
-    
-}
 
 /*
     function to shuffle the deck
@@ -180,8 +209,12 @@ function compareTotals(){
 function displayBust(participant){
     if(participant == player){
         result.innerHTML = "Bust. You lose!";
+        dealer.score++;
+        dealerScore.innerHTML = dealer.score;
     } else if (participant == dealer){
         result.innerHTML = "Bust. You win!";
+        player.score++;
+        playerScore.innerHTML = player.score;
     }
     //update the totals
     updateHandTotal(dealer);
@@ -193,8 +226,9 @@ function displayBust(participant){
     playerTotal.innerHTML = player.total;
     dealerTotal.innerHTML = dealer.total;
     //hide the hit buttons
-    hitButton.remove();
-    stayButton.remove();
+    hitButton.style.display = "none";
+    stayButton.style.display = "none";
+    resetButton.style.display = "inline-block";
 }
 
 /*
@@ -221,26 +255,28 @@ function displayCard(card, participant){
 function displayGameResult(winner){
     //hide hit and stay buttons
     if(winner == player){
-        console.log("Player win");
-        result.innerHTML = "You won! Play again?";
+        player.score++;
+        playerScore.innerHTML = player.score;
+        result.innerHTML = "You won!";
     } else if(winner == dealer) {
-        console.log("Dealer win");
-        result.innerHTML = "Dealer won! Play again?";
+        dealer.score++;
+        dealerScore.innerHTML = dealer.score;
+        result.innerHTML = "Dealer won!";
+        
     } else if(winner == "tie") {
-        console.log("Tie");
-        result.innerHTML = "Tie. Play again?";
+        result.innerHTML = "Tie.";
     }
     //hide the hit buttons
-    hitButton.remove();
-    stayButton.remove();
+    hitButton.style.display = "none";
+    stayButton.style.display = "none";
     //update the totals
     updateHandTotal(dealer);
     updateHandTotal(player);
     //display the totals
     playerTotal.innerHTML = player.total;
     dealerTotal.innerHTML = dealer.total;
-
-    
+    //display the reset button
+    resetButton.style.display = "inline-block";
 }
 
 
