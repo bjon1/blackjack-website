@@ -18,7 +18,6 @@ const dealerScore = document.getElementById("dealer-score");
 game.style.color = "gray";
  
 let cardImgHidden = document.createElement("img"); 
-cardImgHidden.src = "./cards/facedown.png";
 
 /*
     TO DO: CREATE REFERENCES TO:
@@ -49,8 +48,7 @@ function main() {
     resetButton.addEventListener('click', () => resetGame());
     
     initializeDeck();
-  
-
+    cardImgHidden.src = "./cards/facedown.png";
     shuffleDeck();
     //if a card is drawn, it is displayed
     drawCard(dealer);
@@ -90,6 +88,7 @@ function resetGame(){
     //document.location.reload(); won't save the score
     [player.bet, player.total, dealer.bet, dealer.total] = [0, 0, 0, 0];
     [player.hand, dealer.hand] = [[],[]];
+    cardImgHidden.src = "./cards/facedown.png";
     hitButton.style.display = "inline";
     stayButton.style.display = "inline";
     initializeDeck();
