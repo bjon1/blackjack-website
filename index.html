@@ -12,11 +12,24 @@
     <div class = "button-class">
         <button class = "play-button">Play</button>
     </div>
-    <div>
-        <button id = "hit-button">Hit</button>
-        <button id = "stay-button">Stay</button>
+
+    <div class = "game">
+        <h2>Dealer: <span id = "total-dealer"></span></h2>
+        <div id = "dealer-cards"></div>
+
+        <h2>You: <span id = "total-player"></span></h2>
+        <div id = "player-cards"></div>
+
+        <div class = "buttons">
+            <button id = "hit-button">Hit</button>
+            <button id = "stay-button">Stay</button>
+        </div>
+
+        <b>
+            <p id = "result"></p>
+        </b>
+
     </div>
-    <canvas class = "game-class" width="700" height="700"/>
     <script src="index.js"></script>
 </body>
 </html>

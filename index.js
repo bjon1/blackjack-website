@@ -4,7 +4,17 @@ window.addEventListener('load', main); //call the main method once the page has 
 const playButton = document.querySelector('.play-button'); 
 const hitButton = document.getElementById('hit-button');
 const stayButton = document.getElementById('stay-button');
-const game = document.querySelector('.game-class');
+const game = document.querySelector('.game');
+const result = document.getElementById('result');
+const dealerCards = document.getElementById("dealer-cards");
+const playerCards = document.getElementById("player-cards");
+const dealerTotal = document.getElementById("total-dealer");
+const playerTotal = document.getElementById("total-player");
+
+game.style.color = "gray";
+ 
+let cardImgHidden = document.createElement("img"); 
+cardImgHidden.src = "./cards/facedown.png";
 
 /*
     TO DO: CREATE REFERENCES TO:
@@ -33,8 +43,8 @@ function main() {
     
 
     //create a deck
-    const suits = ['Spades', 'Diamonds', 'Hearts', 'Clubs'];
-    const values = ['Ace', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'Jack', 'Queen', 'King'];
+    const suits = ['S', 'D', 'H', 'C'];
+    const values = ['A', 2, 3, 4, 5, 6, 7, 8, 9, 10, 'J', 'Q', 'K'];
     //for every suit and every value (suit * value combinations), enter card into deck
     for(let suit of suits){
         for(let value of values){
@@ -115,12 +125,14 @@ function checkIfBust(participant){
 function dealerTurn(){
     //dealer reveals hidden card
     dealer.hand[1].face = "shown";
+    cardImgHidden.src = "./cards/" + dealer.hand[1].value + "-" + dealer.hand[1].suit + ".png";    
+    
     let bust;
     //reveal card
     while(dealer.total <= 16 ){
         bust = makeMove(dealer);
     }
-    
+
     if(!bust){
         compareTotals();
     }
@@ -166,37 +178,39 @@ function compareTotals(){
     function to display the bust screen
 */
 function displayBust(participant){
-    hitButton.style.visibility = "hidden";
-    stayButton.style.visibility = "hidden";
     if(participant == player){
-        console.log("Player Bust! Dealer Wins!");
+        result.innerHTML = "Bust. You lose!";
     } else if (participant == dealer){
-        console.log("Dealer Bust! Player wins!");
+        result.innerHTML = "Bust. You win!";
     }
+    //update the totals
+    updateHandTotal(dealer);
+    updateHandTotal(player);
+    //dealer reveals hidden card
+    dealer.hand[1].face = "shown";
+    cardImgHidden.src = "./cards/" + dealer.hand[1].value + "-" + dealer.hand[1].suit + ".png";    
+    //reveal the totals    
+    playerTotal.innerHTML = player.total;
+    dealerTotal.innerHTML = dealer.total;
+    //hide the hit buttons
+    hitButton.remove();
+    stayButton.remove();
 }
 
 /*
     function to display a drawn card
 */
 function displayCard(card, participant){
-    /*
-        Use CSS flexbox to display a card. 
-
-        Add the respective card image to the next open container 
-        on the side of the participant who drew a card
-
-        if "shown" is false, show a face-down card
-    */
     if(card.face == "hidden") {
-        console.log(card);
-        //show a face-down card
+        dealerCards.append(cardImgHidden);
     } else {
+        let cardImg = document.createElement("img");
         if(participant == dealer){
-            console.log(card);
-            //show the respective card face-up 
+            cardImg.src = "./cards/" + card.value + "-" + card.suit + ".png";
+            dealerCards.append(cardImg);
         } else {
-            console.log(card);
-            //show the respective card face-up 
+            cardImg.src = "./cards/" + card.value + "-" + card.suit + ".png";
+            playerCards.append(cardImg);
         }
     }
 }
@@ -208,16 +222,25 @@ function displayGameResult(winner){
     //hide hit and stay buttons
     if(winner == player){
         console.log("Player win");
-        //display player winning screen
+        result.innerHTML = "You won! Play again?";
     } else if(winner == dealer) {
         console.log("Dealer win");
-        //display dealer winning screen
+        result.innerHTML = "Dealer won! Play again?";
     } else if(winner == "tie") {
         console.log("Tie");
-        //display tie
+        result.innerHTML = "Tie. Play again?";
     }
-    hitButton.style.visibility = "hidden";
-    stayButton.style.visibility = "hidden";
+    //hide the hit buttons
+    hitButton.remove();
+    stayButton.remove();
+    //update the totals
+    updateHandTotal(dealer);
+    updateHandTotal(player);
+    //display the totals
+    playerTotal.innerHTML = player.total;
+    dealerTotal.innerHTML = dealer.total;
+
+    
 }
 
 
@@ -229,7 +252,7 @@ function updateHandTotal(participant){
     let aceCount = 0;
     let hand = participant.hand;
     for (let card of hand) {
-        if (card.value === 'Ace') {
+        if (card.value === 'A') {
             aceCount++;
             total += 11;
         } else if (typeof card.value === 'number') {
