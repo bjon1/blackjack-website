@@ -120,11 +120,6 @@ function shuffleDeck(){
     function that runs the process of making a move
 */
 function makeMove(participant){
-    if(participant == player){
-        console.log("Player Hit");
-    } else {
-        console.log("Dealer Hit");
-    }
     drawCard(participant);
     updateHandTotal(participant);
     return checkIfBust(participant);
@@ -157,7 +152,8 @@ function dealerTurn(){
     
     let bust;
     //reveal card
-    while(dealer.total <= 16 ){
+    updateHandTotal(dealer);
+    while(dealer.total <= 16){
         bust = makeMove(dealer);
     }
 
@@ -261,10 +257,10 @@ function displayGameResult(winner){
         dealer.score++;
         dealerScore.innerHTML = dealer.score;
         result.innerHTML = "Dealer won!";
-        
     } else if(winner == "tie") {
         result.innerHTML = "Tie.";
     }
+
     //hide the hit buttons
     hitButton.style.display = "none";
     stayButton.style.display = "none";
