@@ -249,15 +249,15 @@ function displayCard(card, participant){
 */
 function displayGameResult(winner){
     //hide hit and stay buttons
-    if(winner == player){
+    if(winner === player){
         player.score++;
         playerScore.innerHTML = player.score;
         result.innerHTML = "You won!";
-    } else if(winner == dealer) {
+    } else if(winner === dealer) {
         dealer.score++;
         dealerScore.innerHTML = dealer.score;
         result.innerHTML = "Dealer won!";
-    } else if(winner == "tie") {
+    } else if(winner === "tie") {
         result.innerHTML = "Tie.";
     }
 
